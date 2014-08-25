@@ -1,8 +1,8 @@
 # Jack & Jones Frontend Project Template
 
-### An easy project strater for frontend projects on jackjones.com
+### An easy project starter for frontend projects on jackjones.com
 
-#### Version 0.1
+#### Version 1.0
 
 ***
 
