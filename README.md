@@ -60,8 +60,37 @@ Folder structure:
 				modules/
 					< Modules go here, fx mixins and functions >
 				partials/
-					< Imports go here, fx share styling across pages >
+					< Imports go here, fx shared styling across pages >
 		build/
 			< Compiled project will be automatically created here >
+			.local/
+				< Files for the localhost preview >
+			assets/
+				< Compiled files for deployment >
 		node_modules/
 			< Project specific node modules will automatically be installed here >
+
+Project folder should be renamed to fit the project your're working on. All other folders should not be renamed.
+
+##### Add files to config
+
+Find **config.json** in the root of the project, and add your project files
+
+	{
+	"local":
+	{
+		"assets_root": "build/.local/"
+	},
+	"production":
+	{
+		"assets_root": "build/assets/"	
+	},
+	"jsfiles":
+	[
+		< JS files go here >
+	],
+	"cssfiles":
+	[
+		< CSS files go here >
+	]
+	}
