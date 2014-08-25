@@ -104,6 +104,24 @@ Find **config.json** in the root of the project, and add your project files
 
 Change the listening port of XAMPP to **1337** in **/xampp/apache/conf/httpd.conf**
 
+Add a virtualhost configuration to **/xampp/apache/conf/extra/httpd-vhosts.conf**
+
+```conf
+<VirtualHost corebeats.dev:1337>
+    ServerAdmin jeppe.olesen@bestseller.com
+    DocumentRoot "C:/Projects/Git/core_beats/"
+    ServerName jeans.dev
+    ServerAlias jeans.dev
+    <Directory "C:/Projects/Git/core_beats/">
+        Options Indexes FollowSymLinks ExecCGI Includes
+        Order Allow,Deny
+        Allow from all
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
 Add a custom localhost domain to your hosts file
 
 	Windows: %SystemRoot%\system32\drivers\etc\hosts
