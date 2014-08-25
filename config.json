@@ -1,0 +1,23 @@
+{
+	"local":
+	{
+		"assets_root": "build/.local/"
+	},
+	"production":
+	{
+		"assets_root": "build/assets/"	
+	},
+	"jsfiles":
+	[
+		"src/scripts/vendor/soundmanager2-nodebug-jsmin.js",
+		"src/scripts/vendor/waveform.js",
+		"src/scripts/vendor/sc-player.js",
+		"src/scripts/vendor/froogaloop.min.js",
+
+		"src/scripts/corebeats.js"
+	],
+	"cssfiles":
+	[
+		"src/styles/corebeats.css"
+	]
+}
