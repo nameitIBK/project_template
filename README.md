@@ -161,3 +161,27 @@ Before you start editing scripts and styles, make sure to start the watcher:
 	gulp watch
 
 This monitors the project folders for changes and triggers LiveReload when needed. It also logs errors to the commandline for bugfixing.
+
+***
+
+### Commands
+
+Installing gulp globally
+
+	npm imstall -g gulp
+
+Install modules for project
+
+	npm install
+
+Build the project for localhost preview
+
+	gulp build
+
+Build the project for deployment
+	
+	gulp deploy
+
+Initiate the watcher
+
+	gulp watch
