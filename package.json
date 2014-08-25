@@ -1,0 +1,39 @@
+{
+  "name": "Jack & Jones Frontend Project Template",
+  "version": "0.1",
+  "description": "All the stuff you need to start a project",
+  "author": "Jeppe Hyldgaard Olesen <jeppe.olesen@bestseller.com>",
+  "homepage": "http://www.jackjones.com/...",
+  "main": "gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/..."
+  },
+  "bugs": {
+    "url": "https://github.com/.../issues"
+  },
+  "dependencies": {
+    "gulp": "~3.7.0",
+    "gulp-coffee": "~1.4.1",
+    "gulp-clean": "~0.2.4",
+    "gulp-concat": "~2.1.7",
+    "gulp-minify-css": "~0.3.0",
+    "gulp-jshint": "~1.4.2",
+    "gulp-notify": "~0.5.0",
+    "gulp-livereload": "~1.1.1",
+    "gulp-rename": "~1.0.0",
+    "gulp-uglify": "~0.2.1",
+    "tiny-lr": "~0.0.5",
+    "gulp-watch": "~0.5.0",
+    "gulp-stylus": "~0.0.12",
+    "gulp-util": "~2.2.14",
+    "gulp-flatten": "~0.0.2"
+  },
+  "devDependencies": {
+    "gulp-replace": "~0.2.0",
+    "gulp-debug": "~0.3.0",
+    "gulp-clean": "~0.2.4",
+    "gulp-changed": "~0.2.1",
+    "gulp-util": "~2.2.14"
+  }
+}
