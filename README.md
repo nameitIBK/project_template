@@ -128,6 +128,12 @@ Make an initial build of the project
 
 ### Development
 
+##### Dependencies
+
+Make sure to always run **Node** and **XAMPP** when developing locally.
+
+Node is what handles gulp and LiveReload, while XAMPP provides the localhost server for your project.
+
 ##### Languages
 
 Styling: **stylus** (nib is supported in this package)
@@ -143,3 +149,15 @@ If you're working with a project contained in a content asset, wrap it all in a 
 	<div class='contentasset'>
 		Project markup here
 	</div>
+
+If you're working on a content slot template, your markup should mimic the DMW generated HTML.
+
+After updating the markup you need to do a **gulp build**
+
+##### Watching for changes
+
+Before you start editing scripts and styles, make sure to start the watcher:
+
+	gulp watch
+
+This monitors the project folders for changes and triggers LiveReload when needed. It also logs errors to the commandline for bugfixing.
