@@ -47,7 +47,7 @@ LiveReload will refresh the localhost preview automatically when you do changes.
 
 ##### Create project files
 
-First, copy all the files from this repo into your new project
+First, copy all the files from this repo into your new project and remove the @.gitkeep files
 
 Folder structure:
 
