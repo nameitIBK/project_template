@@ -1,4 +1,2 @@
-project_template
-================
-
-Project starter for campaigns
+core_beats
+==========
