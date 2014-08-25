@@ -79,6 +79,12 @@ Project folder should be renamed to fit the project your're working on. All othe
 
 Find **config.json** in the root of the project, and add your project files
 
+Make sure to add any JS or CSS files you add, also vendor files.
+
+Adding files here will minify them in the project code.
+
+When you introduce new files to the project, remember to do a gulp build
+
 ```json
 {
 "local":
@@ -107,12 +113,12 @@ Change the listening port of XAMPP to **1337** in **/xampp/apache/conf/httpd.con
 Add a virtualhost configuration to **/xampp/apache/conf/extra/httpd-vhosts.conf**
 
 ```conf
-<VirtualHost corebeats.dev:1337>
-    ServerAdmin jeppe.olesen@bestseller.com
-    DocumentRoot "C:/Projects/Git/core_beats/"
-    ServerName jeans.dev
-    ServerAlias jeans.dev
-    <Directory "C:/Projects/Git/core_beats/">
+<VirtualHost project.dev:1337>
+    ServerAdmin email@email.com
+    DocumentRoot "/path/to/project"
+    ServerName project.dev
+    ServerAlias project.dev
+    <Directory "/path/to/project">
         Options Indexes FollowSymLinks ExecCGI Includes
         Order Allow,Deny
         Allow from all
