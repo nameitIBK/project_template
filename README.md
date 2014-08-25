@@ -48,10 +48,20 @@ Folder structure:
 	project/
 		src/
 			fonts/
-				**< Fonts go here >**
+				< Fonts go here >
 			images/
-				**< Images go here >**
+				< Images go here >
 			scripts/
-				**< Project scripts here >**
+				< Project scripts here >
 				vendor/
-					**< Plugins and vendor scripts here >**
+					< Plugins and vendor scripts here >
+			styles/
+				< Styles go here >
+				modules/
+					< Modules go here, fx mixins and functions >
+				partials/
+					< Imports go here, fx share styling across pages >
+		build/
+			< Compiled project will be automatically created here >
+		node_modules/
+			< Project specific node modules will automatically be installed here >
