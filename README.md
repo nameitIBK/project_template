@@ -48,9 +48,7 @@ Folder structure:
 	project/
 		src/
 			fonts/
-				< Fonts go here >
 			images/
-				< Images go here >
 			scripts/
 				< Project scripts here >
 				vendor/
@@ -64,7 +62,6 @@ Folder structure:
 		build/
 			< Compiled project will be automatically created here >
 			.local/
-				< Files for the localhost preview >
 			assets/
 				< Compiled files for deployment >
 		node_modules/
@@ -94,3 +91,29 @@ Find **config.json** in the root of the project, and add your project files
 		< CSS files go here >
 	]
 	}
+
+##### Set up localhost
+
+Change the listening port of XAMPP to **1337** in **/xampp/apache/conf/httpd.conf**
+
+Add a custom localhost domain to your hosts file
+
+	Windows: %SystemRoot%\system32\drivers\etc\hosts
+
+	Mac: /etc/hosts
+
+Config to be added:
+
+	127.0.0.1 	project.dev
+
+Start XAMPP with admin rights and your project is now available to browsers at **http://project.dev:1337**
+
+##### Init project
+
+Navigate to your project root in your command-line and install modules
+
+	npm intall
+
+Make an initial build of the project
+
+	gulp build
