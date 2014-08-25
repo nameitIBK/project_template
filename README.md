@@ -14,7 +14,7 @@
 
 ##### Node.js
 
-Go to http://nodejs.org/ and install the node package for your platform
+Visit the [Node website](http://nodejs.org/) and install the node package for your platform
 
 ##### Gulp
 
@@ -31,9 +31,15 @@ Windows (Make sure cmd is opened as admin):
 
 ##### XAMPP
 
-For windows go to https://www.apachefriends.org/index.html and install the appropriate package
+For windows go [here](https://www.apachefriends.org/index.html) and install the appropriate package
 
 When running XAMPP remember to do so with admin rights
+
+##### Livereload
+
+Install the [LiveReload extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) for Google Chrome
+
+LiveReload will refresh the localhost preview automatically when you do changes.
 
 ***
 
@@ -117,3 +123,23 @@ Navigate to your project root in your command-line and install modules
 Make an initial build of the project
 
 	gulp build
+
+***
+
+### Development
+
+##### Languages
+
+Styling: **stylus** (nib is supported in this package)
+
+Scripting: **coffeescript**
+
+##### Markup
+
+The markup for the project should be added to **project/src/html/index.php.template**
+
+If you're working with a project contained in a content asset, wrap it all in a content asset container, like so:
+
+	<div class='contentasset'>
+		Project markup here
+	</div>
