@@ -10,16 +10,20 @@
 
 #### Instal tools
 
-**Node.js**
+##### Node.js
+
 Go to http://nodejs.org/ and install the node package for your platform
 
-**Gulp**
+##### Gulp
+
 Open your commandline interface and install gulp
 
 Mac:
 
 	sudo npm install -g gulp
 
+
 Windows (Make sure cmd is opened as admin):
 
 	npm install -g gulp
+
