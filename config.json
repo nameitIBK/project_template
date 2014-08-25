@@ -9,15 +9,10 @@
 	},
 	"jsfiles":
 	[
-		"src/scripts/vendor/soundmanager2-nodebug-jsmin.js",
-		"src/scripts/vendor/waveform.js",
-		"src/scripts/vendor/sc-player.js",
-		"src/scripts/vendor/froogaloop.min.js",
-
-		"src/scripts/corebeats.js"
+		"src/scripts/project.js"
 	],
 	"cssfiles":
 	[
-		"src/styles/corebeats.css"
+		"src/styles/style.css"
 	]
 }
