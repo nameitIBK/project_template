@@ -8,18 +8,62 @@
 
 ### How to use:
 
-#### Instal tools
+***
 
-**Node.js**
+#### Install tools globally
+
+##### Node.js
+
 Go to http://nodejs.org/ and install the node package for your platform
 
-**Gulp**
+##### Gulp
+
 Open your commandline interface and install gulp
 
 Mac:
 
 	sudo npm install -g gulp
 
+
 Windows (Make sure cmd is opened as admin):
 
 	npm install -g gulp
+
+##### XAMPP
+
+For windows go to https://www.apachefriends.org/index.html and install the appropriate package
+
+When running XAMPP remember to do so with admin rights
+
+***
+
+#### Set up project
+
+##### Create project files
+
+First, copy all the files from this repo into your new project
+
+Folder structure:
+
+	project/
+		src/
+			fonts/
+				< Fonts go here >
+			images/
+				< Images go here >
+			scripts/
+				< Project scripts here >
+				vendor/
+					< Plugins and vendor scripts here >
+			styles/
+				< Styles go here >
+				modules/
+					< Modules go here, fx mixins and functions >
+				partials/
+					< Imports go here, fx shared styling across pages >
+		build/
+			< Compiled project will be automatically created here >
+		node_modules/
+			< Project specific node modules will automatically be installed here >
+
+Project folder should be renamed to fit the project your're working on. All other folders should not be renamed.
