@@ -91,11 +91,11 @@ Find **config.json** in the root of the project, and add your project files
 },
 "jsfiles":
 [
-	< JS files go here >
+	// JS files go here
 ],
 "cssfiles":
 [
-	< CSS files go here >
+	// CSS files go here
 ]
 }
 ```
