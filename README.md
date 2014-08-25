@@ -79,24 +79,26 @@ Project folder should be renamed to fit the project your're working on. All othe
 
 Find **config.json** in the root of the project, and add your project files
 
-	{
-	"local":
-	{
-		"assets_root": "build/.local/"
-	},
-	"production":
-	{
-		"assets_root": "build/assets/"	
-	},
-	"jsfiles":
-	[
-		< JS files go here >
-	],
-	"cssfiles":
-	[
-		< CSS files go here >
-	]
-	}
+```json
+{
+"local":
+{
+	"assets_root": "build/.local/"
+},
+"production":
+{
+	"assets_root": "build/assets/"	
+},
+"jsfiles":
+[
+	< JS files go here >
+],
+"cssfiles":
+[
+	< CSS files go here >
+]
+}
+```
 
 ##### Set up localhost
 
@@ -126,8 +128,6 @@ Make an initial build of the project
 
 ***
 
-****
-
 ### Development
 
 ##### Dependencies
@@ -148,9 +148,11 @@ The markup for the project should be added to **project/src/html/index.php.templ
 
 If you're working with a project contained in a content asset, wrap it all in a content asset container, like so:
 
-	<div class='contentasset'>
-		Project markup here
-	</div>
+```html
+<div class='contentasset'>
+	Project markup here
+</div>
+```
 
 If you're working on a content slot template, your markup should mimic the DMW generated HTML.
 
