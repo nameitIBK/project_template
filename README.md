@@ -192,6 +192,37 @@ This monitors the project folders for changes and triggers LiveReload when neede
 
 ***
 
+### Deployment
+
+##### Deploying to a content asset
+
+After running **gulp deploy**, upload the **/build/assets/** folder to the correct language library on DMW Staging. Create a new subfolder in /jack-jones/ for the project
+
+Create a content asset for your project.
+
+Copy the markup you added to the index.php.template (Without the div.contentasset container)
+
+Change all internal links (Such as images, products and categories) to use DMW syntax
+
+	Static files: jack-jones/project/assets/folder/file.type?$staticlink$
+
+	Categories: $bsurl('Search-Show','cgid','categoryname')$
+
+	Products: $bsurl('Product-Show','pid','productID')$
+
+Add the script and styling to the content asset JSON configuration
+
+```json
+	{
+	"scriptFiles":["jack-jones/project/assets/scripts/main.min.js?$staticlink$"], 
+	"cssFiles":["jack-jones/project/assets/styles/main.min.css?$staticlink$"]
+	}
+```
+
+Add translations to the content asset and deploy it to the remaining markets
+
+***
+
 ### Commands
 
 Installing gulp globally
