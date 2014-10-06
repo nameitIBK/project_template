@@ -1,6 +1,6 @@
 {
-  "name": "Jack & Jones Frontend Project Template",
-  "version": "0.1",
+  "name": "JJ_template",
+  "version": "0.1.0",
   "description": "All the stuff you need to start a project",
   "author": "Jeppe Hyldgaard Olesen <jeppe.olesen@bestseller.com>",
   "homepage": "http://www.jackjones.com/...",
@@ -27,7 +27,8 @@
     "gulp-watch": "~0.5.0",
     "gulp-stylus": "~0.0.12",
     "gulp-util": "~2.2.14",
-    "gulp-flatten": "~0.0.2"
+    "gulp-flatten": "~0.0.2",
+    "gulp-ext-replace": "~0.1.0"
   },
   "devDependencies": {
     "gulp-replace": "~0.2.0",
