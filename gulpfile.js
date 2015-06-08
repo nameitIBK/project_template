@@ -1,209 +1,183 @@
-var CSS_ORDERED_FILES, JS_ORDERED_FILES, changed, clean, coffee, concat, config, debug, guid, gulp, gutil, livereload, lr, minifycss, paths, pkg, rename, replace, server, stylus, uglify;
+var gulp = require('gulp');
+var coffee = require('gulp-coffee');
+var stylus = require('gulp-stylus');
+var uglify = require('gulp-uglify');
+var sourcemaps = require('gulp-sourcemaps');
+var del = require('del');
+var minifycss = require('gulp-minify-css');
+var gutil = require('gulp-util');
+var plumber = require('gulp-plumber');
+var autoprefixer = require('gulp-autoprefixer');
+var nib = require('nib');
+var changed = require('gulp-changed');
+var coffeelint = require('gulp-coffeelint');
+var Personium = require('gulp-personium');
+var preprocess = require('gulp-preprocess');
+var livereload = require('gulp-livereload');
 
-gulp = require('gulp');
+// You'll need to create the credentials.json file for gulp to work
+// You can find a sample file at github.com/jackjonesfashion/dmw_static
+// Do not commit the credentials to github, as your login will be exposed
+var creds = require('./credentials.json');
 
-flatten = require('gulp-flatten');
+// Update these paths to fit your structure
+var paths = {
+  scripts: 'src/scripts/**/*.coffee',
 
-debug = require('gulp-debug');
+  styles: [
+    'src/styles/**/*.styl',
+    '!src/styles/partials/**/*.styl',
+    '!src/styles/modules/**/*.styl'
+  ],
 
-stylus = require('gulp-stylus');
+  html: [
+    'src/html/*.html',
+    '!src/html/partials/**/*.html'
+  ],
 
-minifycss = require('gulp-minify-css');
+  images: 'src/images/**/*',
 
-coffee = require('gulp-coffee');
+  copy: [
+    'src/**/*',
+    '!src/{scripts,scripts/**}',
+    '!src/{styles,styles/**}',
+    '!src/{images,images/**}',
+    '!src/html/*.html',
+    '!src/html/partials/**/*.html'
+  ],
 
-uglify = require('gulp-uglify');
-
-gutil = require('gulp-util');
-
-changed = require('gulp-changed');
-
-rename = require('gulp-rename');
-
-clean = require('gulp-clean');
-
-concat = require('gulp-concat');
-
-replace = require('gulp-replace');
-
-livereload = require('gulp-livereload');
-
-lr = require('tiny-lr');
-
-extreplace = require('gulp-ext-replace')
-
-server = lr();
-
-pkg = require('./package.json');
-
-config = require('./config.json');
-
-JS_ORDERED_FILES = config.jsfiles;
-
-CSS_ORDERED_FILES = config.cssfiles;
-
-paths = {
-  coffee: {
-    src: 'src/scripts/**/*.coffee',
-    dst: 'build/.local/scripts'
-  },
-  stylus: {
-    src: 'src/styles/**/*.styl',
-    dst: 'build/.local/styles'
-  },
-  javascript: {
-    src: 'build/.local/scripts/**/*.js',
-    dst: 'build/.local/scripts'
-  },
-  stylesheet: {
-    src: 'build/.local/styles/**/*.css',
-    dst: 'build/.local/styles'
-  },
-  images: {
-    src: 'src/images/**/*',
-    dst: 'build/assets/images'
-  },
-  production: {
-    dst: 'build/assets'
-  }
+  // Files to upload when deploying
+  deployments: [
+    'build/project-assets/project-name/scripts/*.js',
+    'build/project-assets/project-name/styles/*.css'
+  ]
 };
 
-gulp.task('template:production', function() {
-  var css, cssFileStr, js, jsFileStr, _i, _j, _len, _len1, _ref;
-  css = [];
-  _ref = config.cssfiles;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    cssFileStr = _ref[_i];
-    css.push(cssFileStr.split("src/").join("assets/"));
-  }
-  js = [];
-  for (_j = 0, _len1 = JS_ORDERED_FILES.length; _j < _len1; _j++) {
-    jsFileStr = JS_ORDERED_FILES[_j];
-    js.push(jsFileStr.split("src/").join("assets/"));
-  }
-  return gulp.src('src/html/index.php.template', {
-    base: './'
-  }).pipe(replace("{CSS_FILES_DESKTOP}", css)).pipe(replace("{JS_FILES_DESKTOP}", js)).pipe(replace("{guid}", "main")).pipe(extreplace("")).pipe(flatten()).pipe(gulp.dest('./build'));
+// Emancipate yourself from build-folder slavery
+// None but ourselves can free our project
+//    - Bob Marley
+gulp.task('clean', function(cb) {
+  del(['build'], cb);
 });
 
-gulp.task('template:local', function() {
-  var css, cssFileStr, js, jsFileStr, _i, _j, _len, _len1;
-  css = [];
-  for (_i = 0, _len = CSS_ORDERED_FILES.length; _i < _len; _i++) {
-    cssFileStr = CSS_ORDERED_FILES[_i];
-    css.push(cssFileStr.split("src/").join("build/.local/"));
-  }
-  js = [];
-  for (_j = 0, _len1 = JS_ORDERED_FILES.length; _j < _len1; _j++) {
-    jsFileStr = JS_ORDERED_FILES[_j];
-    js.push(jsFileStr.split("src/").join("build/.local/"));
-  }
-  return gulp.src('src/html/*.php.template', {
-    base: './'
-  }).pipe(replace("{CSS_FILES_DESKTOP}", css)).pipe(replace("{JS_FILES_DESKTOP}", js)).pipe(replace("{guid}", "main")).pipe(extreplace("")).pipe(flatten()).pipe(gulp.dest('./build'));
-});
-
-gulp.task('styles', function() {
-  return gulp.src(paths.stylus.src)
-  .pipe(flatten())
-  .pipe(changed(paths.stylus.dst, {
-    extension: '.css'
-  })).pipe(stylus({
-    use: ['nib'],
-    errors: true
-  })).on('error', gutil.log).on('error', gutil.beep).pipe(gulp.dest(paths.stylus.dst)).pipe(livereload(server));
-});
-
-gulp.task('styles-min', ['styles'], function() {
-  var css, cssFileStr, _i, _len;
-  css = [];
-  for (_i = 0, _len = CSS_ORDERED_FILES.length; _i < _len; _i++) {
-    cssFileStr = CSS_ORDERED_FILES[_i];
-    css.push(cssFileStr.split("src/").join("build/.local/"));
-  }
-  return gulp.src(css).pipe(concat('main.css')).pipe(rename({
-    suffix: '.min'
-  })).pipe(minifycss()).pipe(gulp.dest(paths.production.dst + "/styles"));
-});
-
+// Transpile coffee, minify and provide sourcemaps
 gulp.task('scripts', function() {
-  return gulp.src(paths.coffee.src).pipe(changed(paths.coffee.dst, {
-    extension: '.js'
-  })).pipe(coffee({
-    bare: true
-  })).on('error', gutil.log).on('error', gutil.beep).pipe(gulp.dest(paths.coffee.dst)).pipe(livereload(server));
+  return gulp.src(paths.scripts)
+    .pipe(plumber())
+    .pipe(changed('build/project-assets/project-name/scripts', {extension: '.js'}))
+    .pipe(sourcemaps.init())
+    .pipe(coffeelint({
+      no_tabs: { level: "ignore" },
+      indentation: { value: 1 },
+      max_line_length: { level: "ignore" }
+    }))
+    .pipe(coffeelint.reporter())
+    .pipe(coffee())
+    .pipe(uglify({
+      mangle: false,
+      beautify: false
+    }))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('build/project-assets/project-name/scripts'))
+    .pipe(livereload());
 });
 
-gulp.task('scripts-min', ['scripts'], function() {
-  var js, jsFileStr, _i, _len;
-  js = [];
-  for (_i = 0, _len = JS_ORDERED_FILES.length; _i < _len; _i++) {
-    jsFileStr = JS_ORDERED_FILES[_i];
-    js.push(jsFileStr.split("src/").join("build/.local/"));
-  }
-  return gulp.src(js).pipe(concat('main.js')).pipe(rename({
-    suffix: '.min'
-  })).pipe(uglify()).pipe(gulp.dest(paths.production.dst + "/scripts"));
+// Process styling and minify
+gulp.task('styles', function(){
+  return gulp.src(paths.styles)
+    .pipe(plumber())
+    .pipe(changed('build/project-assets/project-name/styles', {extension: '.css'}))
+    .pipe(stylus())
+    .pipe(autoprefixer({ browser: 'Last 3 versions' }))
+    .pipe(minifycss({
+      processImport: false,
+      advanced: false
+    }))
+    .pipe(gulp.dest('build/project-assets/project-name/styles'))
+    .pipe(livereload());
 });
 
-gulp.task('file-copy', function() {
-  gulp.src(['src/scripts/**/*', "!src/scripts/**/*.coffee"], {
-    base: 'src/scripts'
-  }).pipe(gulp.dest('./build/.local/scripts/'));
-  gulp.src('src/php/**/*.php', {
-    base: 'src/php'
-  }).pipe(gulp.dest('./build/assets/php/'));
-  gulp.src('src/images/**/*', {
-    base: 'src/images'
-  }).pipe(gulp.dest('./build/assets/images/'));
-  gulp.src('src/fonts/**/*', {
-    base: 'src/fonts'
-  }).pipe(gulp.dest('./build/assets/fonts/'));
-  return gulp.src('src/svg/**/*.svg', {
-    base: 'src/svg'
-  }).pipe(gulp.dest('./build/assets/svg/'));
-});
-
+// Copy all images
+// Todo: Image optimization
 gulp.task('images', function() {
-  return gulp.src([paths.images.src, '!src/images/{base64,base64/**}']).pipe(changed(paths.images.dst))
-  .pipe(livereload(server)).pipe(gulp.dest(paths.images.dst));
+  return gulp.src(paths.images)
+    .pipe(plumber())
+    .pipe(changed('build/project-assets/project-name/images'))
+    .pipe(gulp.dest('build/project-assets/project-name/images'))
+    .pipe(livereload());
 });
 
-gulp.task('clean', function() {
-  return gulp.src(['build/index.php', 'build/assets/*'], {
-    read: false
-  }).pipe(clean({
-    force: true
-  }));
+// Process html
+gulp.task('html', function () {
+  return gulp.src(paths.html)
+    .pipe(plumber())
+    .pipe(preprocess())
+    .pipe(gulp.dest('build/project-assets/project-name/'))
+    .pipe(livereload());
 });
 
-gulp.task('default', function() {
-  return console.log("no 'default' task, run 'gulp build/deploy/watch'");
+// Copy anything that's not transpiled
+gulp.task('copy', function() {
+  return gulp.src(paths.copy)
+    .pipe(gulp.dest('./build/project-assets/project-name'));
 });
 
+// Do a complete build
 gulp.task('build', function() {
-  return gulp.start('file-copy', 'scripts', 'styles', 'template:local');
+  gulp.start('scripts', 'styles', 'images', 'html', 'copy')
 });
 
-gulp.task('deploy', function() {
-  return gulp.start('styles', 'scripts', 'scripts-min', 'styles-min', 'file-copy', 'scripts-min', 'template:production');
-});
-
+// Rerun the task when a file changes
 gulp.task('watch', function() {
-  return server.listen(35729, function(err) {
-    if (err) {
-      return console.log(err);
-    }
-    gulp.watch('src/styles/**/*.styl', ['styles']);
-    gulp.watch('src/scripts/**/*.coffee', ['scripts']);
-    return gulp.watch('src/images/**/*', ['images']);
-  });
+  livereload.listen();
+  gulp.watch(paths.scripts, ['scripts']);
+  gulp.watch(paths.styles, ['styles']);
+  gulp.watch(paths.images, ['images']);
+  gulp.watch(paths.html, ['html']);
 });
 
-guid = function() {
-  var s4;
-  s4 = function() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  };
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-};
+gulp.task('watch-live', function() {
+  gulp.watch(paths.scripts, ['deploy-sandbox']);
+  gulp.watch(paths.styles, ['deploy-sandbox']);
+});
+
+// Deployments
+// baseUrl = The URL used to connect to the DMW instance
+// baseDir = The common shared folder for your assets (Fx '5-lines' or 'css')
+gulp.task('deploy-sandbox', ['scripts', 'styles'], function(){
+  var personium = new Personium({
+    baseUrl: creds.sandbox.baseUrl,
+    baseDir: creds.sandbox.baseDir,
+    user: creds.sandbox.user,
+    password: creds.sandbox.password
+  });
+
+  return gulp.src(paths.deployments)
+    .pipe(personium.upload());
+});
+
+gulp.task('deploy-staging', ['scripts', 'styles'], function(){
+  var personium = new Personium({
+    baseUrl: creds.staging.baseUrl,
+    baseDir: creds.staging.baseDir,
+    user: creds.staging.user,
+    password: creds.staging.password
+  });
+
+  return gulp.src(paths.deployments)
+    .pipe(personium.upload())
+});
+
+// The default task (called when you run `gulp` from cli)
+gulp.task('default', function(){
+  gutil.log('No default task, use', gutil.colors.green('gulp <task>'), 'instead');
+  gutil.log('Tasks available:');
+  gutil.log(gutil.colors.green('gulp clean'), 'to clean the project of previous builds');
+  gutil.log(gutil.colors.green('gulp scripts'), 'to build scripts');
+  gutil.log(gutil.colors.green('gulp styles'), 'to build styles');
+  gutil.log(gutil.colors.green('gulp images'), 'to build images');
+  gutil.log(gutil.colors.green('gulp build'), 'to make a complete build without deploying');
+  gutil.log(gutil.colors.green('gulp watch'), 'to trigger builds when files are saved');
+  gutil.log(gutil.colors.green('gulp deploy-sandbox'), 'to deploy scripts and styles to sandbox');
+  gutil.log(gutil.colors.green('gulp deploy-staging'), 'to deploy scripts and styles to staging');
+});
