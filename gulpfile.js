@@ -19,6 +19,7 @@ var livereload = require('gulp-livereload');
 // You can find a sample file at github.com/jackjonesfashion/dmw_static
 // Do not commit the credentials to github, as your login will be exposed
 var creds = require('./credentials.json');
+var config = require('./config.json');
 
 // Update these paths to fit your structure
 var paths = {
@@ -31,7 +32,7 @@ var paths = {
   ],
 
   html: [
-    'src/html/*.html',
+    'src/html/**/*.html',
     '!src/html/partials/**/*.html'
   ],
 
@@ -42,14 +43,14 @@ var paths = {
     '!src/{scripts,scripts/**}',
     '!src/{styles,styles/**}',
     '!src/{images,images/**}',
-    '!src/html/*.html',
+    '!src/html/**/*.html',
     '!src/html/partials/**/*.html'
   ],
 
   // Files to upload when deploying
   deployments: [
-    'build/project-assets/project-name/scripts/*.js',
-    'build/project-assets/project-name/styles/*.css'
+    'build/'+config.projectinfo.projectname+'/assets/scripts/*.js',
+    'build/'+config.projectinfo.projectname+'/assets/styles/*.css'
   ]
 };
 
@@ -64,7 +65,7 @@ gulp.task('clean', function(cb) {
 gulp.task('scripts', function() {
   return gulp.src(paths.scripts)
     .pipe(plumber())
-    .pipe(changed('build/project-assets/project-name/scripts', {extension: '.js'}))
+    .pipe(changed('build/'+config.projectinfo.projectname+'/assets/scripts', {extension: '.js'}))
     .pipe(sourcemaps.init())
     .pipe(coffeelint({
       no_tabs: { level: "ignore" },
@@ -78,7 +79,7 @@ gulp.task('scripts', function() {
       beautify: false
     }))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest('build/project-assets/project-name/scripts'))
+    .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/scripts'))
     .pipe(livereload());
 });
 
@@ -86,14 +87,14 @@ gulp.task('scripts', function() {
 gulp.task('styles', function(){
   return gulp.src(paths.styles)
     .pipe(plumber())
-    .pipe(changed('build/project-assets/project-name/styles', {extension: '.css'}))
+    .pipe(changed('build/'+config.projectinfo.projectname+'/assets/styles', {extension: '.css'}))
     .pipe(stylus())
     .pipe(autoprefixer({ browser: 'Last 3 versions' }))
     .pipe(minifycss({
       processImport: false,
       advanced: false
     }))
-    .pipe(gulp.dest('build/project-assets/project-name/styles'))
+    .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/styles'))
     .pipe(livereload());
 });
 
@@ -102,8 +103,8 @@ gulp.task('styles', function(){
 gulp.task('images', function() {
   return gulp.src(paths.images)
     .pipe(plumber())
-    .pipe(changed('build/project-assets/project-name/images'))
-    .pipe(gulp.dest('build/project-assets/project-name/images'))
+    .pipe(changed('build/'+config.projectinfo.projectname+'/assets/images'))
+    .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/images'))
     .pipe(livereload());
 });
 
@@ -112,14 +113,14 @@ gulp.task('html', function () {
   return gulp.src(paths.html)
     .pipe(plumber())
     .pipe(preprocess())
-    .pipe(gulp.dest('build/project-assets/project-name/'))
+    .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/html/'))
     .pipe(livereload());
 });
 
 // Copy anything that's not transpiled
 gulp.task('copy', function() {
   return gulp.src(paths.copy)
-    .pipe(gulp.dest('./build/project-assets/project-name'));
+    .pipe(gulp.dest('./build/'+config.projectinfo.projectname+'/assets'));
 });
 
 // Do a complete build
@@ -147,7 +148,7 @@ gulp.task('watch-live', function() {
 gulp.task('deploy-sandbox', ['scripts', 'styles'], function(){
   var personium = new Personium({
     baseUrl: creds.sandbox.baseUrl,
-    baseDir: creds.sandbox.baseDir,
+    baseDir: config.projectinfo.projectname,
     user: creds.sandbox.user,
     password: creds.sandbox.password
   });
@@ -159,7 +160,7 @@ gulp.task('deploy-sandbox', ['scripts', 'styles'], function(){
 gulp.task('deploy-staging', ['scripts', 'styles'], function(){
   var personium = new Personium({
     baseUrl: creds.staging.baseUrl,
-    baseDir: creds.staging.baseDir,
+    baseDir: config.projectinfo.projectname,
     user: creds.staging.user,
     password: creds.staging.password
   });
