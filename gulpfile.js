@@ -14,7 +14,7 @@ var coffeelint = require('gulp-coffeelint');
 var Personium = require('gulp-personium');
 var preprocess = require('gulp-preprocess');
 var livereload = require('gulp-livereload');
-
+var findandreplace = require('gulp-replace-task');
 // You'll need to create the credentials.json file for gulp to work
 // You can find a sample file at github.com/jackjonesfashion/dmw_static
 // Do not commit the credentials to github, as your login will be exposed
@@ -116,6 +116,21 @@ gulp.task('html', function () {
     .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/html/'))
     .pipe(livereload());
 });
+// Process html for DMW
+gulp.task('dmw', function () {
+  return gulp.src(paths.html)
+    .pipe(findandreplace({
+      variables: {
+          '../../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
+          '.jpg': '.jpg?$staticlink$',
+          '.png': '.png?$staticlink$',
+          '.gif': '.gif?$staticlink$'
+    },usePrefix: false}))
+    .pipe(plumber())
+    .pipe(preprocess())
+    .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/DMWhtml/'))
+    .pipe(livereload());
+});
 
 // Copy anything that's not transpiled
 gulp.task('copy', function() {
@@ -144,7 +159,7 @@ gulp.task('watch-live', function() {
 
 // Deployments
 // baseUrl = The URL used to connect to the DMW instance
-// baseDir = The common shared folder for your assets (Fx '5-lines' or 'css')
+// baseDir = setup in config.json
 gulp.task('deploy-sandbox', ['scripts', 'styles'], function(){
   var personium = new Personium({
     baseUrl: creds.sandbox.baseUrl,
@@ -178,6 +193,7 @@ gulp.task('default', function(){
   gutil.log(gutil.colors.green('gulp styles'), 'to build styles');
   gutil.log(gutil.colors.green('gulp images'), 'to build images');
   gutil.log(gutil.colors.green('gulp build'), 'to make a complete build without deploying');
+  gutil.log(gutil.colors.green('gulp dmw'), 'to make all html-files with dmw paths');
   gutil.log(gutil.colors.green('gulp watch'), 'to trigger builds when files are saved');
   gutil.log(gutil.colors.green('gulp deploy-sandbox'), 'to deploy scripts and styles to sandbox');
   gutil.log(gutil.colors.green('gulp deploy-staging'), 'to deploy scripts and styles to staging');
