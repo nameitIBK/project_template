@@ -124,13 +124,17 @@ gulp.task('dmw', function () {
           '../../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
           '.jpg': '.jpg?$staticlink$',
           '.png': '.png?$staticlink$',
-          '.gif': '.gif?$staticlink$'
+          '.gif': '.gif?$staticlink$',
+          '.js': '.js?$staticlink$',
+          '.css': '.css?$staticlink$'
     },usePrefix: false}))
     .pipe(plumber())
     .pipe(preprocess())
     .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/DMWhtml/'))
     .pipe(livereload());
 });
+
+
 
 // Copy anything that's not transpiled
 gulp.task('copy', function() {
