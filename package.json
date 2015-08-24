@@ -21,6 +21,7 @@
     "gulp-plumber": "~0.6.6",
     "gulp-preprocess": "^1.2.0",
     "gulp-replace-task": "~0.2.1",
+    "gulp-run-seq": "^1.2.2",
     "gulp-sourcemaps": "~0.2.1",
     "gulp-util": "~3.0.3",
     "gulp-watch": "~4.1.0"

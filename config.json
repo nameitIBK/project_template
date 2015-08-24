@@ -1,28 +1,42 @@
 {
 	"projectinfo":
 	{   
+		"brand" : "ni-",
 		"projectname" : "w60-2030",
 		"prefix_path" : "name-it/campaigns/",
 		"prefix_filename" : "kids-test-"
 	},
 	"xml":
-	{
-		"template" : "slots/html/htmlslotcontainer.isml",
-		"contextID" : "ni-kids-test",
-
-		"slotID" : ["row0-slot0","row2-slot1"],
+	{	
+		"slotfiles_path" : "src/html/subpage/slot-rows/",
 		"slotfiles" : [
-						"src/html/subpage/row0-0.html",
-						"src/html/subpage/row2-1.html"
+						"row0-0.html",
+						"row2-1.html"
 					],
-		"xmlfiles" : [
-						"src/xml/start.html",
-						"src/xml/end.html"
+		"template" : [
+						"slots/html/htmlslotcontainer.isml"
 					],
-		"configurationID" : "nameit-kids-test-w60-2015",
-		
-		"rank" : "10",
-		"startDate" : "2030-10-05T22:00:00.000Z",
-		"endDate" : "2030-10-08T21:45:00.000Z"
+		"DMWslotsname" : [
+						"row0-slot0",
+						"row2-slot1"
+					],
+		"rank" : [
+						"10",
+						"10"
+					],
+		"context_id" :[
+						"ni-kids"
+					],
+		"config_id" :[
+						"nameit-kids-row0-0-w60-2030",
+						"nameit-kids-row2-1-w60-2030"
+					],
+		"start_end_date" : [
+								[
+									"2030-10-05T22:00:00.000Z",
+									"2030-10-08T21:45:00.000Z"
+								]
+							]
+
 	}
 }

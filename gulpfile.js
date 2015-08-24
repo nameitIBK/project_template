@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+require('gulp-run-seq');
 var coffee = require('gulp-coffee');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
@@ -15,6 +16,9 @@ var Personium = require('gulp-personium');
 var preprocess = require('gulp-preprocess');
 var livereload = require('gulp-livereload');
 var findandreplace = require('gulp-replace-task');
+var concat = require('gulp-concat');
+var rename = require("gulp-rename");
+var fs = require('fs');
 // You'll need to create the credentials.json file for gulp to work
 // You can find a sample file at github.com/jackjonesfashion/dmw_static
 // Do not commit the credentials to github, as your login will be exposed
@@ -24,20 +28,19 @@ var config = require('./config.json');
 // Update these paths to fit your structure
 var paths = {
   scripts: 'src/scripts/**/*.coffee',
-
   styles: [
     'src/styles/**/*.styl',
     '!src/styles/partials/**/*.styl',
     '!src/styles/modules/**/*.styl'
   ],
-
   html: [
     'src/html/**/*.html',
     '!src/html/partials/**/*.html'
   ],
-
+  xml: [
+    'src/xml/**/*.xml'
+  ],
   images: 'src/images/**/*',
-
   copy: [
     'src/**/*',
     '!src/{scripts,scripts/**}',
@@ -46,7 +49,6 @@ var paths = {
     '!src/html/**/*.html',
     '!src/html/partials/**/*.html'
   ],
-
   // Files to upload when deploying
   deployments: [
     'build/'+config.projectinfo.projectname+'/assets/scripts/*.js',
@@ -58,7 +60,8 @@ var paths = {
 // None but ourselves can free our project
 //    - Bob Marley
 gulp.task('clean', function(cb) {
-  del(['build'], cb);
+  gutil.log('Deleted folder: '+gutil.colors.red('build/'));
+  del(['build'],cb);
 });
 
 // Transpile coffee, minify and provide sourcemaps
@@ -116,24 +119,133 @@ gulp.task('html', function () {
     .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/html/'))
     .pipe(livereload());
 });
+
 // Process html for DMW
 gulp.task('dmw', function () {
   return gulp.src(paths.html)
     .pipe(findandreplace({
       variables: {
           '../../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
+          '../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',//JJ fix
           '.jpg': '.jpg?$staticlink$',
           '.png': '.png?$staticlink$',
           '.gif': '.gif?$staticlink$',
           '.js': '.js?$staticlink$',
-          '.css': '.css?$staticlink$'
+          '.css': '.css?$staticlink$',
     },usePrefix: false}))
     .pipe(plumber())
     .pipe(preprocess())
     .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/DMWhtml/'))
-    .pipe(livereload());
 });
 
+
+gulp.task('xml', function(end) {
+  setTimeout(function() {
+    var assignedslots = [];
+    var slotfiles_path = config.xml.slotfiles_path;
+    for (var i = 0; i < config.xml.slotfiles.length; i++) {
+      assignedslots.push(slotfiles_path+config.xml.slotfiles[i]);
+          gutil.log('Making '+gutil.colors.yellow(config.xml.slotfiles[i])+' DMW friendly'); 
+
+    }
+    gulp.src(assignedslots)
+      .pipe(findandreplace({
+        variables: {
+            '../../': config.projectinfo.prefix_path+config.projectinfo.projectname+'/assets/',
+            '../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
+            '.jpg': '.jpg?$staticlink$',
+            '.png': '.png?$staticlink$',
+            '.gif': '.gif?$staticlink$',
+            '.js': '.js?$staticlink$',
+            '.css': '.css?$staticlink$',
+            '<': '&lt;',
+            '>': '&gt;'
+        },usePrefix: false}))
+      .pipe(plumber())
+      .pipe(gulp.dest('src/tempfiles/'))
+    gutil.log('Start config of XML..'); 
+  }, 500);
+  setTimeout(function() {
+    var xmlsetup = [];
+    for (var y = 0; y < config.xml.slotfiles.length; y++) {
+      var xmlsetup = [y];
+      for (var j = 0; j < config.xml.slotfiles.length; j++) {
+        var rank = (config.xml.rank[j] !== undefined ? config.xml.rank[j] : '');
+        var rank = (config.xml.rank[j] !== undefined ? config.xml.rank[j] : '');
+        var startdate = (config.xml.start_end_date[j] !== undefined ?  config.xml.start_end_date[j][0] : config.xml.start_end_date[0][0]);
+        var enddate = (config.xml.start_end_date[j] !== undefined ?  config.xml.start_end_date[j][1] : config.xml.start_end_date[0][1]);
+        var template = (config.xml.template[j] !== undefined ?  config.xml.template[j] : config.xml.template[0]);
+        var DMWslotsname = (config.xml.DMWslotsname[j] !== undefined ?  config.xml.DMWslotsname[j] : config.xml.DMWslotsname[0]);
+        var contextid = (config.xml.context_id[j] !== undefined ?  config.xml.context_id[j] : config.xml.context_id[0]);
+        xmlsetup[j] = {
+                    SLOTSID: DMWslotsname,
+                    CONTEXTID: contextid,
+                    CONFIGID: config.xml.config_id[j],
+                    TEMPLATE: template,
+                    RANK: rank,
+                    STARTDATE: startdate,
+                    ENDDATE: enddate,
+                    DEBUG: true
+                  }
+      }
+      //gutil.log(xmlsetup[y]);
+    }
+    for (var i = 0; i < config.xml.slotfiles.length; i++) {
+      gulp.src(['src/xml/slot-start.xml','src/tempfiles/'+config.xml.slotfiles[i],'src/xml/slot-end.xml'])
+      .pipe(concat({ path: 'all-slots-'+config.xml.slotfiles[i]+'.xml', stat: { mode: 0666 }}))
+      .pipe(preprocess({context:  xmlsetup[i]}))
+      .pipe(rename({
+        basename: 'slot-'+i,
+        extname: '.xml'
+      }))
+      .pipe(gulp.dest('src/tempfiles/'));
+      gutil.log('From '+gutil.colors.cyan(config.xml.slotfiles[i])+' to '+gutil.colors.green('slot-'+i+'.xml'));
+    }
+    gutil.log('XML config: '+gutil.colors.green('DONE')); 
+  }, 800);
+
+  setTimeout(function() {
+    if (fs.existsSync('src/tempfiles/slots.xml')) {
+      fs.writeFile('src/tempfiles/slots.xml','');
+    }
+    gulp.src('src/tempfiles/*.xml')
+      .pipe(concat({ path: 'slots.xml', stat: { mode: 0666 }}))
+      .pipe(gulp.dest('src/tempfiles/'));
+    gutil.log('XML merge: '+gutil.colors.green('DONE'));
+
+    end();
+    setTimeout(function() {
+      gulp.start('finish-up');
+    }, 500);
+  }, 1000);
+});
+
+// Do the XML import dance
+gulp.task('finish-up', function(end) {
+
+  gulp.src(['src/xml/config-start.xml','src/tempfiles/slots.xml','src/xml/config-end.xml'])
+    .pipe(concat({ path: 'slots.xml', stat: { mode: 0666 }}))
+    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/DE'))
+    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/DK'))
+    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/NL'))
+    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/NO'))
+    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/ROE'))
+    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/SE'));
+    //gutil.log('translation: '+gutil.colors.gray('DE'));
+    gutil.log('Making site import for: '+gutil.colors.gray('DE'));
+    gutil.log('Making site import for: '+gutil.colors.gray('DK'));
+    gutil.log('Making site import for: '+gutil.colors.gray('NL'));
+    gutil.log('Making site import for: '+gutil.colors.gray('NO'));
+    gutil.log('Making site import for: '+gutil.colors.gray('ROE'));
+    gutil.log('Making site import for: '+gutil.colors.gray('SE'));
+    gutil.log(gutil.colors.yellow('wait for tempfiles to be deleted..'));
+  setTimeout(function() {
+    del(['src/tempfiles/']);
+    gutil.log('Deleted folder: '+gutil.colors.red('src/tempfiles/'));
+    gutil.log('Clean up: '+gutil.colors.green('DONE'));
+    end();
+  }, 500);
+});
 
 
 // Copy anything that's not transpiled
@@ -198,6 +310,7 @@ gulp.task('default', function(){
   gutil.log(gutil.colors.green('gulp images'), 'to build images');
   gutil.log(gutil.colors.green('gulp build'), 'to make a complete build without deploying');
   gutil.log(gutil.colors.green('gulp dmw'), 'to make all html-files with dmw paths');
+  gutil.log(gutil.colors.green('gulp xml'), 'to make all html-files to dmw siteimport setup in config');
   gutil.log(gutil.colors.green('gulp watch'), 'to trigger builds when files are saved');
   gutil.log(gutil.colors.green('gulp deploy-sandbox'), 'to deploy scripts and styles to sandbox');
   gutil.log(gutil.colors.green('gulp deploy-staging'), 'to deploy scripts and styles to staging');
