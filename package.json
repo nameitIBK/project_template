@@ -24,7 +24,9 @@
     "gulp-run-seq": "^1.2.2",
     "gulp-sourcemaps": "~0.2.1",
     "gulp-util": "~3.0.3",
-    "gulp-watch": "~4.1.0"
+    "gulp-watch": "~4.1.0",
+    "gulp-concat": "~2.5.0",
+    "gulp-rename": "~1.2.2"
   },
   "repository": {
     "type": "git",

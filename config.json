@@ -8,6 +8,7 @@
 	},
 	"xml":
 	{	
+		"headfile" : "src/html/subpage/slot-rows/html-head.html",
 		"slotfiles_path" : "src/html/subpage/slot-rows/",
 		"slotfiles" : [
 						"row0-0.html",
