@@ -27,12 +27,9 @@
     "gulp-sourcemaps": "~0.2.1",
     "gulp-util": "~3.0.3",
     "gulp-watch": "~4.1.0",
-<<<<<<< HEAD
-    "parse-xlsx": "~0.0.6"
-=======
     "gulp-concat": "~2.5.0",
-    "gulp-rename": "~1.2.2"
->>>>>>> origin/master
+    "gulp-rename": "~1.2.2",
+    "parse-xlsx": "~0.0.6"
   },
   "repository": {
     "type": "git",
