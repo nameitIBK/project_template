@@ -8,10 +8,14 @@
 	},
 	"xml":
 	{	
+<<<<<<< HEAD
 		"translationfile" : "src/xml/w34.xlsx",
 		"transcountries" :[
 						"DE","DK","NL","NO","ROE","se"
 					],
+=======
+		"headfile" : "src/html/subpage/slot-rows/html-head.html",
+>>>>>>> origin/master
 		"slotfiles_path" : "src/html/subpage/slot-rows/",
 		"slotfiles" : [
 						"row0-0.html",

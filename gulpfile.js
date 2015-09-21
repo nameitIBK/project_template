@@ -145,6 +145,7 @@ gulp.task('xml', function(end) {
     var assignedslots = [];
     var slotfiles_path = config.xml.slotfiles_path;
     for (var i = 0; i < config.xml.slotfiles.length; i++) {
+      assignedslots.push(config.xml.headfile);
       assignedslots.push(slotfiles_path+config.xml.slotfiles[i]);
           gutil.log('Making '+gutil.colors.yellow(config.xml.slotfiles[i])+' DMW friendly'); 
 
@@ -192,7 +193,7 @@ gulp.task('xml', function(end) {
       //gutil.log(xmlsetup[y]);
     }
     for (var i = 0; i < config.xml.slotfiles.length; i++) {
-      gulp.src(['src/xml/slot-start.xml','src/tempfiles/'+config.xml.slotfiles[i],'src/xml/slot-end.xml'])
+      gulp.src(['src/xml/slot-start.xml','src/tempfiles/html-head.html','src/tempfiles/'+config.xml.slotfiles[i],'src/xml/slot-end.xml'])
       .pipe(concat({ path: 'all-slots-'+config.xml.slotfiles[i]+'.xml', stat: { mode: 0666 }}))
       .pipe(preprocess({context:  xmlsetup[i]}))
       .pipe(rename({

@@ -1,11 +1,15 @@
 <slot-configuration slot-id="<!-- @echo SLOTSID -->" context="category" context-id="<!-- @echo CONTEXTID -->" configuration-id="<!-- @echo CONFIGID -->" assigned-to-site="true">
 <template><!-- @echo TEMPLATE --></template>
+<!-- @if RANK!='' -->
 <rank><!-- @echo RANK --></rank>
+<!-- @endif -->
 <enabled-flag>true</enabled-flag>
+<!-- @if STARTDATE!='' -->
 <schedule>
 <start-date><!-- @echo STARTDATE --></start-date>
 <end-date><!-- @echo ENDDATE --></end-date>
 </schedule>
+<!-- @endif -->
 <content>
 <html>
 <body xml:lang="x-default">
