@@ -19,6 +19,7 @@ var findandreplace = require('gulp-replace-task');
 var concat = require('gulp-concat');
 var rename = require("gulp-rename");
 var fs = require('fs');
+var parser = require('parse-xlsx');
 // You'll need to create the credentials.json file for gulp to work
 // You can find a sample file at github.com/jackjonesfashion/dmw_static
 // Do not commit the credentials to github, as your login will be exposed
@@ -126,7 +127,7 @@ gulp.task('dmw', function () {
     .pipe(findandreplace({
       variables: {
           '../../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
-          '../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',//JJ fix
+          
           '.jpg': '.jpg?$staticlink$',
           '.png': '.png?$staticlink$',
           '.gif': '.gif?$staticlink$',
@@ -152,7 +153,6 @@ gulp.task('xml', function(end) {
       .pipe(findandreplace({
         variables: {
             '../../': config.projectinfo.prefix_path+config.projectinfo.projectname+'/assets/',
-            '../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
             '.jpg': '.jpg?$staticlink$',
             '.png': '.png?$staticlink$',
             '.gif': '.gif?$staticlink$',
@@ -165,6 +165,7 @@ gulp.task('xml', function(end) {
       .pipe(gulp.dest('src/tempfiles/'))
     gutil.log('Start config of XML..'); 
   }, 500);
+
   setTimeout(function() {
     var xmlsetup = [];
     for (var y = 0; y < config.xml.slotfiles.length; y++) {
@@ -222,22 +223,21 @@ gulp.task('xml', function(end) {
 
 // Do the XML import dance
 gulp.task('finish-up', function(end) {
+  var transCountryArr = config.xml.transcountries;
+  var transCountryCount = config.xml.transcountries.length;
 
-  gulp.src(['src/xml/config-start.xml','src/tempfiles/slots.xml','src/xml/config-end.xml'])
-    .pipe(concat({ path: 'slots.xml', stat: { mode: 0666 }}))
-    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/DE'))
-    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/DK'))
-    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/NL'))
-    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/NO'))
-    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/ROE'))
-    .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/SE'));
-    //gutil.log('translation: '+gutil.colors.gray('DE'));
-    gutil.log('Making site import for: '+gutil.colors.gray('DE'));
-    gutil.log('Making site import for: '+gutil.colors.gray('DK'));
-    gutil.log('Making site import for: '+gutil.colors.gray('NL'));
-    gutil.log('Making site import for: '+gutil.colors.gray('NO'));
-    gutil.log('Making site import for: '+gutil.colors.gray('ROE'));
-    gutil.log('Making site import for: '+gutil.colors.gray('SE'));
+if(config.xml.translationfile){
+    sheet = new parser(config.xml.translationfile, 'Sheet1');
+  
+  for (var c = 0; c < transCountryCount; c++) {
+
+    TransSheet(sheet,transCountryArr[c].toUpperCase());
+
+  };
+}else{
+    gutil.log(gutil.colors.red('missing path to Excel file (.xslx file). NOT translated'));
+    return  end();
+  }
     gutil.log(gutil.colors.yellow('wait for tempfiles to be deleted..'));
   setTimeout(function() {
     del(['src/tempfiles/']);
@@ -247,6 +247,34 @@ gulp.task('finish-up', function(end) {
   }, 500);
 });
 
+
+function TransSheet (excelFile,country) {
+  pickCountry = 'country'+ country;
+  var transTXT = excelFile.values(pickCountry);
+  var sheetROWS = []  
+  var PPtransTXT = [];
+  var counter = 1;
+  for (var t = 0; t < transTXT.length; t++) {
+    if (transTXT[t] !== undefined){
+      PPtransTXT += '\"ROW'+t +'\" : \"'+ transTXT[t].replace(/\n|\r/gi, '&lt;br /&gt;')+'\"';
+      if(counter < transTXT.length){
+        PPtransTXT += ',';
+      }
+    }
+    counter = counter + 1;
+  }
+  var PPtransJSON = JSON.parse('{'+PPtransTXT+'}');
+  gulp.src(['src/xml/config-start.xml','src/tempfiles/slots.xml','src/xml/config-end.xml'])
+  .pipe(concat({ path: 'slots.xml', stat: { mode: 0666 }}))
+  .pipe(findandreplace({
+    variables:{
+      '--&gt;' : '-->',
+      '&lt;!--' : '<!--'
+    }, usePrefix:false}))
+  .pipe(preprocess({context:  PPtransJSON }))
+  .pipe(gulp.dest('build/'+config.projectinfo.brand+config.projectinfo.projectname+'/sites/'+country))
+  gutil.log('Making site import for: '+gutil.colors.gray(country));
+};
 
 // Copy anything that's not transpiled
 gulp.task('copy', function() {
@@ -310,7 +338,7 @@ gulp.task('default', function(){
   gutil.log(gutil.colors.green('gulp images'), 'to build images');
   gutil.log(gutil.colors.green('gulp build'), 'to make a complete build without deploying');
   gutil.log(gutil.colors.green('gulp dmw'), 'to make all html-files with dmw paths');
-  gutil.log(gutil.colors.green('gulp xml'), 'to make all html-files to dmw siteimport setup in config');
+  gutil.log(gutil.colors.green('gulp xml'), 'to make all html-files to dmw siteimport setup in config and translation');
   gutil.log(gutil.colors.green('gulp watch'), 'to trigger builds when files are saved');
   gutil.log(gutil.colors.green('gulp deploy-sandbox'), 'to deploy scripts and styles to sandbox');
   gutil.log(gutil.colors.green('gulp deploy-staging'), 'to deploy scripts and styles to staging');

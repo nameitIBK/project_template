@@ -8,35 +8,39 @@
 	},
 	"xml":
 	{	
+		"translationfile" : "src/xml/w34.xlsx",
+		"transcountries" :[
+						"DE","DK","NL","NO","ROE","se"
+					],
 		"slotfiles_path" : "src/html/subpage/slot-rows/",
 		"slotfiles" : [
 						"row0-0.html",
 						"row2-1.html"
 					],
-		"template" : [
-						"slots/html/htmlslotcontainer.isml"
+		"context_id" :[
+						"ni-kids"
 					],
 		"DMWslotsname" : [
 						"row0-slot0",
 						"row2-slot1"
-					],
-		"rank" : [
-						"10",
-						"10"
-					],
-		"context_id" :[
-						"ni-kids"
-					],
+					],		
 		"config_id" :[
 						"nameit-kids-row0-0-w60-2030",
 						"nameit-kids-row2-1-w60-2030"
 					],
+		"template" : [
+						"slots/html/htmlslotcontainer.isml"
+					],
 		"start_end_date" : [
 								[
-									"2030-10-05T22:00:00.000Z",
-									"2030-10-08T21:45:00.000Z"
+									"",
+									""
 								]
-							]
+								
+							],
+		"rank" : [
+						"10"
+					]
 
 	}
 }

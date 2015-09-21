@@ -16,15 +16,18 @@
     "del": "~1.1.1",
     "gulp-changed": "^1.2.0",
     "gulp-coffeelint": "^0.4.0",
+    "gulp-concat": "~2.5.0",
     "gulp-livereload": "^3.8.0",
     "gulp-personium": "^0.1.1",
     "gulp-plumber": "~0.6.6",
     "gulp-preprocess": "^1.2.0",
+    "gulp-rename": "~1.2.2",
     "gulp-replace-task": "~0.2.1",
     "gulp-run-seq": "^1.2.2",
     "gulp-sourcemaps": "~0.2.1",
     "gulp-util": "~3.0.3",
-    "gulp-watch": "~4.1.0"
+    "gulp-watch": "~4.1.0",
+    "parse-xlsx": "~0.0.6"
   },
   "repository": {
     "type": "git",
