@@ -4,11 +4,12 @@
 		"brand" : "ni-",
 		"projectname" : "w60-2030",
 		"prefix_path" : "name-it/campaigns/",
-		"prefix_filename" : "kids-test-"
+		"prefix_filename" : "kids-test-",
+		"testcountry" : "DK"
 	},
 	"xml":
 	{	
-		"translationfile" : "src/xml/w34.xlsx",
+		"translationfile" : "src/xml/test.xlsx",
 		"transcountries" :[
 						"DE","DK","NL","NO","ROE","se"
 					],

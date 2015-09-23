@@ -114,20 +114,35 @@ gulp.task('images', function() {
 
 // Process html
 gulp.task('html', function () {
+  sheet = new parser(config.xml.translationfile, 'Sheet1');
+  pickCountry = 'country'+config.projectinfo.testcountry;
+  var transTXT = sheet.values(pickCountry);
+  var sheetROWS = []  
+  var PPtransTXT = [];
+  var counter = 1;
+  for (var t = 0; t < transTXT.length; t++) {
+
+    if (transTXT[t] !== undefined){
+      PPtransTXT += '\"ROW'+t +'\" : \"'+ transTXT[t].replace(/(\r\n|\\r\\n)(?!$)/g, '<br />')+'\"';
+      if(counter < transTXT.length){
+        PPtransTXT += ',';
+      }
+    }
+    counter = counter + 1;
+  }
+  var PPtransJSON = JSON.parse('{'+PPtransTXT+'}');
   return gulp.src(paths.html)
     .pipe(plumber())
-    .pipe(preprocess())
+    .pipe(preprocess({context:  PPtransJSON }))
     .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/html/'))
     .pipe(livereload());
 });
-
 // Process html for DMW
 gulp.task('dmw', function () {
   return gulp.src(paths.html)
     .pipe(findandreplace({
       variables: {
           '../../': config.projectinfo.prefix_path + config.projectinfo.projectname+'/assets/',
-          
           '.jpg': '.jpg?$staticlink$',
           '.png': '.png?$staticlink$',
           '.gif': '.gif?$staticlink$',
@@ -257,7 +272,7 @@ function TransSheet (excelFile,country) {
   var counter = 1;
   for (var t = 0; t < transTXT.length; t++) {
     if (transTXT[t] !== undefined){
-      PPtransTXT += '\"ROW'+t +'\" : \"'+ transTXT[t].replace(/\n|\r/gi, '&lt;br /&gt;')+'\"';
+      PPtransTXT += '\"ROW'+t +'\" : \"'+ transTXT[t].replace(/(\r\n|\\r\\n)(?!$)/g, '&lt;br /&gt;')+'\"';
       if(counter < transTXT.length){
         PPtransTXT += ',';
       }
