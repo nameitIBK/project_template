@@ -113,29 +113,41 @@ gulp.task('images', function() {
 });
 
 // Process html
-gulp.task('html', function () {
-  sheet = new parser(config.xml.translationfile, 'Sheet1');
-  pickCountry = 'country'+config.projectinfo.testcountry;
-  var transTXT = sheet.values(pickCountry);
-  var sheetROWS = []  
-  var PPtransTXT = [];
-  var counter = 1;
-  for (var t = 0; t < transTXT.length; t++) {
-
-    if (transTXT[t] !== undefined){
-      PPtransTXT += '\"ROW'+t +'\" : \"'+ transTXT[t].replace(/(\r\n|\\r\\n)(?!$)/g, '<br />')+'\"';
-      if(counter < transTXT.length){
-        PPtransTXT += ',';
-      }
+gulp.task('html', function (end) {
+  var transSheet = config.xml.translationSheets;
+  var transSheetCount = transSheet.length;
+  var PPtransTXTALL = [];
+  for (var y = 0; y < transSheetCount; y++) {
+    sheet = new parser(config.xml.translationfile, transSheet[y]);
+    pickCountry = 'country'+config.projectinfo.testcountry;
+    var transTXT = sheet.values(pickCountry);
+    var sheetROWS = [];
+    if(PPtransTXT !== ""){
+      var PPtransTXT = [];
     }
-    counter = counter + 1;
+    var counter = 1;
+    for (var t = 0; t < transTXT.length; t++) {
+      if (transTXT[t] !== undefined){
+        PPtransTXT += '\"'+transSheet[y]+t +'\" : \"'+ transTXT[t].replace(/(\r\n|\\r\\n)(?!$)/g, '<br />')+'\"';
+        if(counter < transTXT.length){
+          PPtransTXT += ',';
+        }
+      }
+      counter = counter + 1;
+    }
+    if(transSheetCount-1 != y){
+      PPtransTXTALL += PPtransTXT +',';
+    }else{
+      PPtransTXTALL += PPtransTXT ;
+    }
   }
-  var PPtransJSON = JSON.parse('{'+PPtransTXT+'}');
+  //gutil.log(PPtransTXTALL); 
+  var PPtransJSON = JSON.parse('{'+PPtransTXTALL+'}');
   return gulp.src(paths.html)
-    .pipe(plumber())
-    .pipe(preprocess({context:  PPtransJSON }))
-    .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/html/'))
-    .pipe(livereload());
+  .pipe(plumber())
+  .pipe(preprocess({context:  PPtransJSON }))
+  .pipe(gulp.dest('build/'+config.projectinfo.projectname+'/assets/html/'))
+  .pipe(livereload());
 });
 // Process html for DMW
 gulp.task('dmw', function () {
@@ -163,7 +175,6 @@ gulp.task('xml', function(end) {
       assignedslots.push(config.xml.headfile);
       assignedslots.push(slotfiles_path+config.xml.slotfiles[i]);
           gutil.log('Making '+gutil.colors.yellow(config.xml.slotfiles[i])+' DMW friendly'); 
-
     }
     gulp.src(assignedslots)
       .pipe(findandreplace({
@@ -243,13 +254,10 @@ gulp.task('finish-up', function(end) {
   var transCountryCount = config.xml.transcountries.length;
 
 if(config.xml.translationfile){
-    sheet = new parser(config.xml.translationfile, 'Sheet1');
-  
+
   for (var c = 0; c < transCountryCount; c++) {
-
-    TransSheet(sheet,transCountryArr[c].toUpperCase());
-
-  };
+    TransSheet(transCountryArr[c].toUpperCase());
+  }
 }else{
     gutil.log(gutil.colors.red('missing path to Excel file (.xslx file). NOT translated'));
     return  end();
@@ -264,22 +272,36 @@ if(config.xml.translationfile){
 });
 
 
-function TransSheet (excelFile,country) {
-  pickCountry = 'country'+ country;
-  var transTXT = excelFile.values(pickCountry);
-  var sheetROWS = []  
-  var PPtransTXT = [];
-  var counter = 1;
-  for (var t = 0; t < transTXT.length; t++) {
-    if (transTXT[t] !== undefined){
-      PPtransTXT += '\"ROW'+t +'\" : \"'+ transTXT[t].replace(/(\r\n|\\r\\n)(?!$)/g, '&lt;br /&gt;')+'\"';
-      if(counter < transTXT.length){
-        PPtransTXT += ',';
-      }
+function TransSheet (country) {
+
+var transSheet = config.xml.translationSheets;
+  var transSheetCount = transSheet.length;
+  var PPtransTXTALL = [];
+  for (var y = 0; y < transSheetCount; y++) {
+    sheet = new parser(config.xml.translationfile, transSheet[y]);
+    pickCountry = 'country'+ country;
+    var transTXT = sheet.values(pickCountry);
+    var sheetROWS = [];
+    if(PPtransTXT !== ""){
+      var PPtransTXT = [];
     }
-    counter = counter + 1;
+    var counter = 1;
+    for (var t = 0; t < transTXT.length; t++) {
+      if (transTXT[t] !== undefined){
+        PPtransTXT += '\"'+transSheet[y]+t +'\" : \"'+ transTXT[t].replace(/(\r\n|\\r\\n)(?!$)/g, '<br />')+'\"';
+        if(counter < transTXT.length){
+          PPtransTXT += ',';
+        }
+      }
+      counter = counter + 1;
+    }
+    if(transSheetCount-1 != y){
+      PPtransTXTALL += PPtransTXT +',';
+    }else{
+      PPtransTXTALL += PPtransTXT ;
+    }
   }
-  var PPtransJSON = JSON.parse('{'+PPtransTXT+'}');
+  var PPtransJSON = JSON.parse('{'+PPtransTXTALL+'}');
   gulp.src(['src/xml/config-start.xml','src/tempfiles/slots.xml','src/xml/config-end.xml'])
   .pipe(concat({ path: 'slots.xml', stat: { mode: 0666 }}))
   .pipe(findandreplace({

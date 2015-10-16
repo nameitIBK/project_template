@@ -9,7 +9,8 @@
 	},
 	"xml":
 	{	
-		"translationfile" : "src/xml/test.xlsx",
+		"translationfile" : "src/xml/standard.xlsx",
+		"translationSheets" : ["ROW","NEWBORN","MINI","KIDS"],
 		"transcountries" :[
 						"DE","DK","NL","NO","ROE","se"
 					],
@@ -35,12 +36,13 @@
 					],
 		"start_end_date" : [
 								[
-									"",
-									""
-								]
+									"2030-10-05T22:00:00.000Z",
+									"2030-10-08T21:45:00.000Z"
+								] 
 								
 							],
 		"rank" : [
+						"10",
 						"10"
 					]
 
